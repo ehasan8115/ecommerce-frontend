@@ -9,8 +9,7 @@ import ProductDetails from "../customer/components/ProductDetails/ProductDetails
 import Checkout from "../customer/components/Checkout/Checkout";
 import Order from "../customer/components/Orders/Order";
 import OrderDetails from "../customer/components/Orders/OrderDetails";
-import OrderTraker from "../customer/components/Orders/OrderTraker";
-import OrderCard from "../customer/components/Orders/OrderCard";
+import PaymentSuccess from "../customer/components/paymentSuccess/PaymentSuccess";
 
 export default function CustomerRoutes() {
   return (
@@ -20,6 +19,8 @@ export default function CustomerRoutes() {
       </div>
       <Routes>
         <Route path="/" element={<HomePage />}></Route>
+        <Route path="/login" element={<HomePage />}></Route>
+        <Route path="/register" element={<HomePage />}></Route>
         <Route path="/cart" element={<Cart />}></Route>
         <Route
           path="/:levelOne/:levelTwo/:levelThree"
@@ -32,6 +33,7 @@ export default function CustomerRoutes() {
           path="/account/order/:orderId"
           element={<OrderDetails />}
         ></Route>
+        <Route path="/payment/:orderId" element={<PaymentSuccess />}></Route>
       </Routes>
       <div>
         <Footer />

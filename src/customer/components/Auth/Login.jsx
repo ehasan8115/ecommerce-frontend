@@ -9,19 +9,7 @@ import { useState } from "react";
 export default function LoginUserForm({ handleNext }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const jwt = localStorage.getItem("jwt");
-  const [openSnackBar, setOpenSnackBar] = useState(false);
-  const { auth } = useSelector((store) => store);
-  const handleCloseSnakbar = () => setOpenSnackBar(false);
-  useEffect(() => {
-    if (jwt) {
-      dispatch(getUser(jwt));
-    }
-  }, [jwt]);
 
-  useEffect(() => {
-    if (auth.user || auth.error) setOpenSnackBar(true);
-  }, [auth.user]);
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -86,19 +74,6 @@ export default function LoginUserForm({ handleNext }) {
           </Button>
         </div>
       </div>
-      <Snackbar
-        open={openSnackBar}
-        autoHideDuration={6000}
-        onClose={handleCloseSnakbar}
-      >
-        <Alert
-          onClose={handleCloseSnakbar}
-          severity="success"
-          sx={{ width: "100%" }}
-        >
-          {auth.error ? auth.error : auth.user ? "Register Success" : ""}
-        </Alert>
-      </Snackbar>
     </React.Fragment>
   );
 }

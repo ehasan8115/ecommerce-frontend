@@ -19,14 +19,17 @@
   }
   ```
 */
-import { useState } from "react";
-import { StarIcon } from "@heroicons/react/20/solid";
+import { useEffect, useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import ProductReviewCard from "./ProductReviewCard";
 import { Box, Button, Grid, LinearProgress, Rating } from "@mui/material";
 import HomeSectionCard from "../HomeSectionCard/HomeSectionCard";
 import { mens_kurta } from "../../../Data/Men/men_kurta";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { findProductById } from "../../../Redux/Product/Action";
+import { addItemToCart } from "../../../Redux/Cart/Action";
 
 const product = {
   name: "Basic Tee 6-Pack",
@@ -83,18 +86,31 @@ function classNames(...classes) {
 }
 
 export default function ProductDetails() {
-  const [selectedColor, setSelectedColor] = useState(product.colors[0]);
   const [activeImage, setActiveImage] = useState(null);
-  const [selectedSize, setSelectedSize] = useState(product.sizes[2]);
+  const [selectedSize, setSelectedSize] = useState();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { productId } = useParams();
+  const { customersProduct } = useSelector((store) => store);
+  const jwt = localStorage.getItem("jwt");
 
   const handleSetActiveImage = (image) => {
     setActiveImage(image);
   };
 
+  const handleSubmit = () => {};
+
   const handleAddToCart = () => {
+    const data = { productId, size: selectedSize.name };
+    console.log("data _ ", data);
+    dispatch(addItemToCart(data));
     navigate("/cart");
   };
+
+  useEffect(() => {
+    const data = { productId: Number(productId), jwt };
+    dispatch(findProductById(data));
+  }, [productId]);
 
   return (
     <div className="bg-white lg:px-18">
@@ -144,7 +160,7 @@ export default function ProductDetails() {
           <div className="flex flex-col items-center">
             <div className="overflow-hidden rounded-lg max-w-[30rem] max-h-[35rem]">
               <img
-                src={product.images[0].src}
+                src={activeImage?.src || customersProduct.product?.imageUrl}
                 alt={product.images[0].alt}
                 className="h-full w-full object-cover object-center"
               />
@@ -169,10 +185,10 @@ export default function ProductDetails() {
           <div className="lg:col-span-1 mx-auto max-w-2xl px-4 pb-16 sm:px-6  lg:max-w-7xl  lg:px-8 lg:pb-24">
             <div className="lg:col-span-2">
               <h1 className="text-lg lg:text-xl font-semibold tracking-tight text-gray-900  ">
-                Universal
+                {customersProduct.product?.brand}
               </h1>
               <h1 className="text-lg lg:text-xl tracking-tight text-gray-900 opacity-60 pt-1">
-                Universal medium size tshirt for men
+                {customersProduct.product?.title}
               </h1>
             </div>
 
@@ -180,9 +196,15 @@ export default function ProductDetails() {
             <div className="mt-4 lg:row-span-3 lg:mt-0">
               <h2 className="sr-only">Product information</h2>
               <div className="flex space-x-5 items-center text-lg lg:text-xl tracking-tight text-gray-900 mt-6">
-                <p className="font-semibold">₹200</p>
-                <p className="opacity-50 line-through">₹150</p>
-                <p className="text-green-600 font-semibold">50% Off</p>
+                <p className="font-semibold">
+                  ₹{customersProduct.product?.discountedPrice}
+                </p>
+                <p className="opacity-50 line-through">
+                  ₹{customersProduct.product?.price}
+                </p>
+                <p className="text-green-600 font-semibold">
+                  {customersProduct.product?.discountPersent}% Off
+                </p>
               </div>
 
               {/* Reviews */}
@@ -204,7 +226,7 @@ export default function ProductDetails() {
                 </div>
               </div>
 
-              <form className="mt-10">
+              <form className="mt-10" onSubmit={handleSubmit}>
                 {/* Sizes */}
                 <div className="mt-10">
                   <div className="flex items-center justify-between">
@@ -298,7 +320,7 @@ export default function ProductDetails() {
 
                 <div className="space-y-6">
                   <p className="text-base text-gray-900">
-                    {product.description}
+                    {customersProduct.product?.description}
                   </p>
                 </div>
               </div>

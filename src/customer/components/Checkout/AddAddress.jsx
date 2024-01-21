@@ -1,8 +1,14 @@
 import { Box, Button, Grid, TextField } from "@mui/material";
 import React from "react";
 import AddressCard from "../adreess/AdreessCard";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { createOrder } from "../../../Redux/Order/Action";
 
-export default function AddAddress() {
+export default function AddAddress({ handleNext }) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -17,7 +23,15 @@ export default function AddAddress() {
       zipCode: data.get("zip"),
       mobile: data.get("phoneNumber"),
     };
+    dispatch(createOrder({ address, navigate }));
+    // after perfoming all the opration
+    handleNext();
     console.log(address);
+  };
+
+  const handleCreateOrder = (item) => {
+    dispatch(createOrder({ address: item, navigate }));
+    handleNext();
   };
 
   return (
@@ -31,6 +45,7 @@ export default function AddAddress() {
               size="large"
               variant="contained"
               color="primary"
+              onClick={()=>handleCreateOrder()}
             >
               Deliverd Here
             </Button>
